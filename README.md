@@ -1,66 +1,164 @@
-## Foundry
+# 🌐 Decentralized Stablecoin System (Foundry)
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+A professional-grade, fully on-chain **overcollateralized stablecoin
+protocol**, architected to mirror real-world DeFi systems like
+**MakerDAO's DAI**.\
+Built using **Solidity + Foundry**, integrating **Chainlink oracles**,
+robust **CDP mechanics**, and a complete testing suite.\
+This project showcases deep smart contract engineering, security-focused
+design, and advanced DeFi architecture --- perfect for my portfolio.
 
-Foundry consists of:
+------------------------------------------------------------------------
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+# 🚀 Project Highlights
 
-## Documentation
+-   🪙 **Custom ERC20 Stablecoin** with engine‑controlled mint/burn\
+-   🏦 **Collateralized Debt Position (CDP)** system\
+-   📉 **Chainlink price feed integration** (mocked for tests)\
+-   🔐 **Health factor + liquidation engine**\
+-   🧪 **Full Foundry test suite** (mocks, fuzz, revert tests)\
+-   🛠 **Automated deployment scripts**\
+-   📚 Learned from **Cyfrin Updraft** while building from scratch
 
-https://book.getfoundry.sh/
+------------------------------------------------------------------------
 
-## Usage
+# 🧩 Architecture Overview
 
-### Build
+## **1. DecentralizedStableCoin.sol**
 
-```shell
-$ forge build
+-   ERC20 stablecoin pegged to USD\
+-   Minting & burning allowed only via DSCEngine\
+-   Prevents unauthorized inflation
+
+## **2. DSCEngine.sol**
+
+Core DeFi logic: - Add collateral (ETH/BTC price-fed assets)\
+- Mint stablecoins based on USD collateral value\
+- Enforce over-collateralization\
+- Calculate & check health factor\
+- Trigger liquidations for unsafe positions
+
+## **3. Price Oracle Layer**
+
+-   Uses **Chainlink AggregatorV3Interface**
+-   Local testing uses **MockV3Aggregator**
+
+## **4. Deployment Layer**
+
+-   `DeployScript.s.sol` → Deploys entire protocol\
+-   `HelperConfig.s.sol` → Provides correct price feeds & configs per
+    network
+
+------------------------------------------------------------------------
+
+# 🗂 Directory Structure
+
+    .
+    ├── src
+    │   ├── DSCEngine.sol
+    │   └── DecentralizedStableCoin.sol
+    │
+    ├── script
+    │   ├── HelperConfig.s.sol
+    │   └── DeployScript.s.sol
+    │
+    ├── test
+    │   ├── mocks
+    │   │   └── MockV3Aggregator.sol
+    │   └── unit
+    │       ├── DecentralizedCointest.t.sol
+    │       ├── DecentralizedEngineTest.t.sol
+    │
+    └── foundry.toml
+
+------------------------------------------------------------------------
+
+# 🔄 Protocol Flow Diagram
+
+                              ┌───────────────────────────┐
+                              │   Chainlink Price Feeds   │
+                              └──────────────┬────────────┘
+                                             │
+                                             ▼
+                               ┌───────────────────────────┐
+                               │       DSCEngine.sol       │
+                               │---------------------------│
+                               │ - Deposit Collateral      │
+                               │ - Mint Stablecoin         │
+                               │ - Redeem Collateral       │
+                               │ - Health Factor Checks    │
+                               │ - Liquidations            │
+                               └──────────────┬────────────┘
+                                             │
+                         Mint / Burn         │         Vault
+                                             │
+                                             ▼
+                              ┌───────────────────────────┐
+                              │ DecentralizedStableCoin   │
+                              │ (ERC20 Stablecoin Token)  │
+                              └──────────────┬────────────┘
+                                             │
+                                             ▼
+                               ┌───────────────────────────┐
+                               │          Users            │
+                               │ Deposit ▸ Borrow ▸ Repay  │
+                               └───────────────────────────┘
+
+------------------------------------------------------------------------
+
+# 🧪 Testing (Foundry)
+
+Includes: - ✔ Minting/Burning logic\
+- ✔ Collateral deposit flow\
+- ✔ Price feed mocking\
+- ✔ Health factor tests\
+- ✔ Liquidation tests\
+- ✔ Fuzz testing for stability\
+- ✔ Revert tests for unsafe actions
+
+Run tests:
+
+``` bash
+forge test -vvvv
 ```
 
-### Test
+------------------------------------------------------------------------
 
-```shell
-$ forge test
+# 🚀 Deployment
+
+Deploy locally:
+
+``` bash
+forge script script/DeployScript.s.sol \
+    --rpc-url http://127.0.0.1:8545 --broadcast
 ```
 
-### Format
+Integrates seamlessly with Anvil, Sepolia, or Mainnet.
 
-```shell
-$ forge fmt
-```
+------------------------------------------------------------------------
 
-### Gas Snapshots
+# 📘 What I Learned
 
-```shell
-$ forge snapshot
-```
+This project strengthened my understanding of: - DeFi protocol
+architecture\
+- CDP-based stablecoin systems\
+- Liquidation mechanics\
+- Oracle security\
+- Modular smart contract design\
+- Foundry scripting and test-driven development\
+- Building production-style Solidity systems
 
-### Anvil
+------------------------------------------------------------------------
 
-```shell
-$ anvil
-```
+# 🎯 Purpose
 
-### Deploy
+This protocol was built from scratch as part of my **Cyfrin Updraft
+training**, designed to mimic real-world DeFi protocols and deepen my
+smart contract security engineering expertise.
 
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
+------------------------------------------------------------------------
 
-### Cast
+# ⚠️ Disclaimer
 
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+This project is for **learning and portfolio showcasing**.\
+Not audited --- not for production use.
